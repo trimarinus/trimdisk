@@ -7,10 +7,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0b1624">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon-180.png">
-<meta name="apple-mobile-web-app-title" content="Trim-disk">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 :root{
   --bg:#0b1624; --panel:#13253b; --line:#26405e; --text:#eaf1f8; --mute:#8fa6bf;
@@ -133,7 +129,7 @@ hr:{
  title:"Trim-disk", hint:"Dodirni ili povuci po disku za odabir kuta vjetra.",
  wind:"Vjetar s", stbd:"desnog boka", port:"lijevog boka", boom:"Kut boma oko", none:"jedra lepršaju",
  foot:"Orijentacijske vrijednosti – prilagodi brodu i jedrima. Pravi kut vjetra (TWA).",
- cu:"Cunningham", vg:"Vang", lv:["opušteno","lagano","srednje","čvrsto","vrlo čvrsto"], tv:"Traveler (glavno jedro)", tw:["prema vjetru","sredina","zavjetrina"], tn:"škota regulira", wl:"Vjetar", wv:["slab","umjeren","jak"],
+ cu:"Cunningham", vg:"Vang", lv:["opušteno","lagano","srednje","čvrsto","vrlo čvrsto"], tv:"Traveler (glavno jedro)", tw:["prema vjetru","sredina","prema zavjetrini"], tn:"škota regulira", wl:"Vjetar", wv:["slab","umjeren","jak"],
  nogo:"No-go zona (ispod 20°)", z1:"U orcu", z2:"Uski poluvjetar", z3:"Poluvjetar", z4:"Široki poluvjetar", z5:"Kosi krmeni vjetar", z6:"Krmeni vjetar",
  t_nogo:"Jedra lepršaju, nema pogona. Okreni od vjetra na najmanje 20°.",
  t_z1:"Škote zategnute, glavno jedro gotovo u osi broda. Flok zategnut. Vunići na zadnjem rubu glavnog jedra trebaju ići ravno prema krmi.",
@@ -161,7 +157,7 @@ sv:{
 var CU={nogo:[0,0,0],z1:[1,2,4],z2:[1,2,3],z3:[0,1,3],z4:[0,1,2],z5:[0,0,2],z6:[0,0,1]};
 var VG={nogo:[0,0,0],z1:[0,1,2],z2:[1,2,3],z3:[2,3,4],z4:[2,3,4],z5:[3,4,4],z6:[3,4,4]};
 var TR={nogo:[-1,-1,-1],z1:[0,1,2],z2:[1,1,2],z3:[1,1,2],z4:[-1,-1,-1],z5:[-1,-1,-1],z6:[-1,-1,-1]};
-var BO={z1:[-2,0,4],z2:[0,0,3]};
+var BO={z1:[-2,0,4],z2:[0,0,3],z3:[0,0,3]};
 var wind=1;
 function trimOff(z){
   if(z.k==="nogo")return 0;
@@ -333,11 +329,6 @@ svg.addEventListener("pointercancel",function(){drag=false;});
 
 setLang(lang);
 })();
-</script>
-<script>
-if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0){
-  window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});
-}
 </script>
 </body>
 </html>
