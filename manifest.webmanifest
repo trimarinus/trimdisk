@@ -1,11 +1,11 @@
 {
-  "name": "Trim-disk",
+  "name": "Trim-disk – Malešan brod",
   "short_name": "Trim-disk",
   "description": "Trimmscheibe / Trim-disk / Trimskiva",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "any",
   "background_color": "#0b1624",
   "theme_color": "#0b1624",
   "icons": [

@@ -1,6 +1,6 @@
 /* Service Worker: legt die App beim ersten Öffnen im Cache ab, danach läuft sie ohne Internet.
    Bei Änderungen an index.html: VERSION erhöhen, damit Nutzer die neue Fassung bekommen. */
-var VERSION = "trimdisk-v2";
+var VERSION = "trimdisk-2026-11-19-naslov3";
 var FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
 
 self.addEventListener("install", function (e) {
