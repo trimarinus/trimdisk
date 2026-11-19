@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Trimmscheibe</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1624">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-title" content="Trim-disk">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+:root{
+  --bg:#0b1624; --panel:#13253b; --line:#26405e; --text:#eaf1f8; --mute:#8fa6bf;
+  --wind:#f2c94c; --nogo:#c9404b; --nogo-bg:#5a1f2a;
+  --z1:#2b6f9e; --z2:#2a8c9e; --z3:#3aa58b; --z4:#6bb06a; --z5:#b5b35a; --z6:#d9a45a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Avenir Next","Segoe UI",Roboto,system-ui,sans-serif}
+body{padding:max(12px,env(safe-area-inset-top)) 14px max(16px,env(safe-area-inset-bottom));
+  max-width:520px;margin:0 auto;-webkit-user-select:none;user-select:none}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+h1{font-size:1.35rem;margin:0;font-weight:700;letter-spacing:.01em}
+.langs{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.langs button{background:none;border:0;color:var(--mute);font:inherit;font-weight:600;font-size:.85rem;
+  padding:8px 13px;min-width:44px;cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--wind);color:#1a1a1a}
+#disc{width:100%;height:auto;display:block;touch-action:none;cursor:pointer}
+.hint{color:var(--mute);font-size:.8rem;text-align:center;margin:0 0 10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.deg{font-size:2.6rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.side{color:var(--mute);font-size:.9rem;text-align:right}
+.zone{font-size:1.15rem;font-weight:700;margin:8px 0 2px}
+.boom{color:var(--mute);font-size:.9rem;margin-bottom:8px}
+.ctl{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.seg{display:flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:12px;padding:3px 3px 3px 12px;flex:1 1 220px}
+.seg .lb{color:var(--mute);font-size:.8rem;margin-right:auto}
+.seg button{background:none;border:0;color:var(--text);font:inherit;font-size:.85rem;font-weight:600;padding:8px 11px;border-radius:9px;min-height:36px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--wind);color:#1a1a1a}
+.row .tw{width:auto}
+.row{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:.92rem}
+.row .n{flex:1}
+.meter{display:flex;gap:3px}
+.meter i{width:16px;height:8px;border-radius:2px;background:#26405e}
+.meter i.on{background:var(--wind)}
+.row .v{width:5.6em;text-align:right;color:var(--mute)}
+.tip{margin-top:10px !important;font-size:.98rem;line-height:1.45;margin:0}
+.chips{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin:12px 0}
+.chips button{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;
+  font:inherit;font-weight:600;font-size:.95rem;padding:11px 0;cursor:pointer;font-variant-numeric:tabular-nums}
+.chips button[aria-pressed="true"]{background:var(--wind);border-color:var(--wind);color:#1a1a1a}
+.chips button.ng{color:#ff8f98}
+.foot{color:var(--mute);font-size:.75rem;text-align:center;margin-top:8px}
+button:focus-visible{outline:2px solid var(--wind);outline-offset:2px}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title"></h1>
+  <div class="langs" role="group" aria-label="Sprache / Jezik / Språk">
+    <button data-l="de">DE</button><button data-l="hr">HR</button><button data-l="sv">SV</button>
+  </div>
+</header>
+
+<svg id="disc" viewBox="0 0 440 440" role="img" aria-label="Trimmscheibe">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#f2c94c"/>
+    </marker>
+  </defs>
+  <circle cx="220" cy="220" r="205" fill="#0f2034" stroke="#26405e"/>
+  <g id="ring"></g>
+  <g id="ticks"></g>
+  <g id="wind"></g>
+  <g id="boat"></g>
+</svg>
+<p class="hint" id="hint"></p>
+
+<div class="ctl"><div class="seg" id="segW"></div></div>
+
+<div class="card" aria-live="polite">
+  <div class="top">
+    <div class="deg" id="deg"></div>
+    <div class="side" id="side"></div>
+  </div>
+  <div class="zone" id="zone"></div>
+  <div class="boom" id="boom"></div>
+  <div id="trim"></div>
+  <p class="tip" id="tip"></p>
+</div>
+
+<p class="foot" id="foot"></p>
+
+<script>
+(function(){
+"use strict";
+var C=220, NOGO=20;
+var DIVS=[25,35,45,60,75,90,105,120,135,145,160,180];
+
+/* Zonen: von, bis, Farbe, Texte */
+var ZONES=[
+ {a:0,b:NOGO,c:"#5a1f2a",k:"nogo"},
+ {a:NOGO,b:60,c:"#2b6f9e",k:"z1"},
+ {a:60,b:75,c:"#2a8c9e",k:"z2"},
+ {a:75,b:105,c:"#3aa58b",k:"z3"},
+ {a:105,b:135,c:"#6bb06a",k:"z4"},
+ {a:135,b:160,c:"#b5b35a",k:"z5"},
+ {a:160,b:180,c:"#d9a45a",k:"z6"}
+];
+
+/* Richtwerte Baumwinkel (zur Mittschiffslinie) */
+var BOOM=[[20,2],[25,3],[35,5],[45,7],[60,14],[75,24],[90,34],[105,44],[120,54],[135,63],[145,70],[160,80],[180,90]];
+
+var T={
+de:{
+ title:"Trimmscheibe", hint:"Auf die Scheibe tippen oder ziehen, um den Windwinkel zu wählen.",
+ wind:"Wind von", stbd:"Steuerbord", port:"Backbord", boom:"Baumwinkel ca.", none:"Segel killen",
+ foot:"Richtwerte – an Boot und Segel anpassen. Wahrer Windwinkel (TWA).",
+ cu:"Cunningham", vg:"Baumniederholer (Vang)", lv:["lose","leicht","mittel","fest","sehr fest"], tv:"Traveller (Groß)", tw:["Luv","Mitte","Lee"], tn:"Schot regelt", wl:"Wind", wv:["leicht","mittel","stark"],
+ nogo:"No-Go-Zone (unter 20°)", z1:"Am Wind", z2:"Hoher Halbwind", z3:"Halbwind", z4:"Raumwind", z5:"Raumschots", z6:"Vorwind",
+ t_nogo:"Segel killen, kein Vortrieb. Mindestens auf 20° abfallen.",
+ t_z1:"Schoten dicht, Großbaum nahe mittschiffs. Fock dicht. Windfäden am Achterliek sollen gerade nach achtern wehen.",
+ t_z2:"Schoten etwas fieren, mehr Twist zulassen.",
+ t_z3:"Schoten fieren, bis das Vorliek gerade killt, dann einen Hauch dichter. Baumniederholer anziehen.",
+ t_z4:"Schoten weit fieren, Baumniederholer fest. Fock bei Bedarf ausbaumen.",
+ t_z5:"Großbaum weit offen, Gennaker möglich. Auf Patenthalse achten.",
+ t_z6:"Schmetterling (Groß und Fock auf gegenüberliegenden Seiten) oder Gennaker. Bullenstander setzen."},
+hr:{
+ title:"Trim-disk", hint:"Dodirni ili povuci po disku za odabir kuta vjetra.",
+ wind:"Vjetar s", stbd:"desnog boka", port:"lijevog boka", boom:"Kut boma oko", none:"jedra lepršaju",
+ foot:"Orijentacijske vrijednosti – prilagodi brodu i jedrima. Pravi kut vjetra (TWA).",
+ cu:"Cunningham", vg:"Vang", lv:["opušteno","lagano","srednje","čvrsto","vrlo čvrsto"], tv:"Traveler (glavno jedro)", tw:["prema vjetru","sredina","zavjetrina"], tn:"škota regulira", wl:"Vjetar", wv:["slab","umjeren","jak"],
+ nogo:"No-go zona (ispod 20°)", z1:"U orcu", z2:"Uski poluvjetar", z3:"Poluvjetar", z4:"Široki poluvjetar", z5:"Kosi krmeni vjetar", z6:"Krmeni vjetar",
+ t_nogo:"Jedra lepršaju, nema pogona. Okreni od vjetra na najmanje 20°.",
+ t_z1:"Škote zategnute, glavno jedro gotovo u osi broda. Flok zategnut. Vunići na zadnjem rubu glavnog jedra trebaju ići ravno prema krmi.",
+ t_z2:"Malo popusti škote, dopusti više uvijanja jedra (twist).",
+ t_z3:"Popusti škote dok prednji rub glavnog jedra ne počne lepršati, zatim malo zategni. Zategni vang.",
+ t_z4:"Škote jako popuštene, vang zategnut. Flok po potrebi na tangun.",
+ t_z5:"Glavno jedro daleko otvoreno, moguć gennaker. Pazi na nehotični okret krmom.",
+ t_z6:"Leptir (glavno jedro i flok na suprotnim stranama) ili gennaker. Postavi preventer."},
+sv:{
+ title:"Trimskiva", hint:"Tryck eller dra på skivan för att välja vindvinkel.",
+ wind:"Vind från", stbd:"styrbord", port:"babord", boom:"Bomvinkel ca", none:"seglet fladdrar",
+ foot:"Riktvärden – anpassa efter båt och segel. Verklig vindvinkel (TWA).",
+ cu:"Cunningham", vg:"Bomnedhalare (Vang)", lv:["löst","lätt","medel","hårt","mycket hårt"], tv:"Travare (storsegel)", tw:["Lovart","Mitten","Lä"], tn:"skotet styr", wl:"Vind", wv:["svag","måttlig","kraftig"],
+ nogo:"No-go-zon (under 20°)", z1:"Bidevind", z2:"Hård halvvind", z3:"Halvvind", z4:"Slör", z5:"Hård slör", z6:"Läns",
+ t_nogo:"Seglet fladdrar, ingen framdrift. Fall av till minst 20°.",
+ t_z1:"Skotar hårt, storseglet nästan midskepps. Förseglet hårt. Vindstrimmor i akterliket ska blåsa rakt akterut.",
+ t_z2:"Fira skotarna något, tillåt mer tvist.",
+ t_z3:"Fira tills försteget just fladdrar, dra sedan in en aning. Spänn bomnedhalaren.",
+ t_z4:"Fira skotarna mycket, bomnedhalaren hårt. Bomma ut förseglet vid behov.",
+ t_z5:"Storsegel långt ut, gennaker möjlig. Se upp för oavsiktlig gipp.",
+ t_z6:"Fjäril (storsegel och försegel på var sin sida) eller gennaker. Sätt bomstopp."}
+};
+
+/* Richtwerte je Zone und Windstärke (leicht, mittel, stark) */
+var CU={nogo:[0,0,0],z1:[1,2,4],z2:[1,2,3],z3:[0,1,3],z4:[0,1,2],z5:[0,0,2],z6:[0,0,1]};
+var VG={nogo:[0,0,0],z1:[0,1,2],z2:[1,2,3],z3:[2,3,4],z4:[2,3,4],z5:[3,4,4],z6:[3,4,4]};
+var TR={nogo:[-1,-1,-1],z1:[0,1,2],z2:[1,1,2],z3:[1,1,2],z4:[-1,-1,-1],z5:[-1,-1,-1],z6:[-1,-1,-1]};
+var BO={z1:[-2,0,4],z2:[0,0,3]};
+var wind=1;
+function trimOff(z){
+  if(z.k==="nogo")return 0;
+  var o=BO[z.k]?BO[z.k][wind]:0;
+  return o;
+}
+var lang="de", twa=60, side=1; // side +1 = Wind von Steuerbord
+try{
+  var s=localStorage.getItem("trim_lang");
+  var n=(navigator.language||"de").slice(0,2);
+  lang=T[s]?s:(T[n]?n:"de");
+}catch(e){}
+
+var NS="http://www.w3.org/2000/svg";
+function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function P(r,deg,s){var t=deg*Math.PI/180;return [C+s*r*Math.sin(t),C-r*Math.cos(t)];}
+function f(p){return p[0].toFixed(1)+" "+p[1].toFixed(1);}
+function wedge(ri,ro,a,b,s){
+  var sw=s>0?1:0;
+  return "M"+f(P(ro,a,s))+"A"+ro+" "+ro+" 0 0 "+sw+" "+f(P(ro,b,s))+
+         "L"+f(P(ri,b,s))+"A"+ri+" "+ri+" 0 0 "+(1-sw)+" "+f(P(ri,a,s))+"Z";
+}
+
+/* Ring, Skala */
+var ring=document.getElementById("ring"), ticks=document.getElementById("ticks");
+[1,-1].forEach(function(s){
+  ZONES.forEach(function(z){
+    el("path",{d:wedge(112,160,z.a,z.b,s),fill:z.c,stroke:"#0b1624","stroke-width":1.5,opacity:z.k==="nogo"?1:.92},ring);
+  });
+});
+/* schraffierte No-Go-Fläche im Inneren */
+var ng=el("path",{d:"M220 220L"+f(P(112,NOGO,-1))+"A112 112 0 0 1 "+f(P(112,NOGO,1))+"Z",fill:"#c9404b",opacity:.14},ring);
+[1,-1].forEach(function(s){
+  var p=P(205,NOGO,s);
+  el("line",{x1:C,y1:C,x2:P(160,NOGO,s)[0],y2:P(160,NOGO,s)[1],stroke:"#c9404b","stroke-width":2,"stroke-dasharray":"5 4"},ring);
+});
+/* Teilstriche + Zahlen */
+[1,-1].forEach(function(s){
+  DIVS.forEach(function(d){
+    if(d===180&&s===-1)return;
+    var a=P(160,d,s), b=P(170,d,s), t=P(185,d,s);
+    var bad=d<NOGO;
+    el("line",{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:bad?"#ff8f98":"#eaf1f8","stroke-width":2},ticks);
+    var tx=el("text",{x:t[0],y:t[1],"text-anchor":"middle","dominant-baseline":"central","font-size":12,
+      "font-weight":600,fill:bad?"#ff8f98":"#c9d8e8","font-family":"inherit"},ticks);
+    tx.textContent=d;
+  });
+});
+/* Bug-Markierung 0° */
+el("path",{d:"M220 52l-6 -10h12z",fill:"#eaf1f8"},ticks);
+
+/* Wind + Boot */
+var windG=document.getElementById("wind"), boatG=document.getElementById("boat");
+var wl=el("line",{"stroke":"#f2c94c","stroke-width":3.5,"stroke-linecap":"round","marker-end":"url(#arr)"},windG);
+var wd=el("circle",{r:9,fill:"#f2c94c",stroke:"#0b1624","stroke-width":2},windG);
+
+el("path",{d:"M220 175C238 195 241 225 233 265L207 265C199 225 202 195 220 175Z",fill:"#eaf1f8",stroke:"#8fa6bf","stroke-width":1.5},boatG);
+var pole=el("line",{stroke:"#ff3b47","stroke-width":1.5,"stroke-dasharray":"2 3","stroke-linecap":"round",visibility:"hidden"},boatG);
+var jib=el("path",{fill:"none",stroke:"#ff3b47","stroke-width":2.5,"stroke-linecap":"round"},boatG);
+var main=el("path",{fill:"none",stroke:"#ff3b47","stroke-width":3.5,"stroke-linecap":"round"},boatG);
+el("circle",{cx:220,cy:205,r:3.5,fill:"#13253b",stroke:"#8fa6bf"},boatG);
+
+function boomAngle(t){
+  if(t<NOGO)return 0;
+  for(var i=1;i<BOOM.length;i++){
+    if(t<=BOOM[i][0]){
+      var a=BOOM[i-1],b=BOOM[i];
+      return a[1]+(b[1]-a[1])*(t-a[0])/(b[0]-a[0]);
+    }
+  }
+  return 90;
+}
+function zoneOf(t){
+  for(var i=ZONES.length-1;i>=0;i--) if(t>=ZONES[i].a&&t>=ZONES[i].a&&(t<ZONES[i].b||i===ZONES.length-1)&&t>=ZONES[i].a) {
+    if(t>=ZONES[i].a) return ZONES[i];
+  }
+  return ZONES[0];
+}
+
+function draw(){
+  var s=side, t=twa, z0=zoneOf(t), al=Math.max(0,boomAngle(t)+trimOff(z0)), r=Math.PI/180;
+  /* Wind */
+  var a=P(190,t,s), b=P(70,t,s);
+  wl.setAttribute("x1",a[0]);wl.setAttribute("y1",a[1]);wl.setAttribute("x2",b[0]);wl.setAttribute("y2",b[1]);
+  var m=P(136,t,s); wd.setAttribute("cx",m[0]);wd.setAttribute("cy",m[1]);
+  wd.setAttribute("r",0); // Marker nur Pfeil
+  /* Segel: Lee-Seite ist -s */
+  var mx=220,my=205,L=54;
+  var ex=mx-s*L*Math.sin(al*r), ey=my+L*Math.cos(al*r);
+  var bulge=al>2?10:0;
+  var cx=(mx+ex)/2-s*bulge, cy=(my+ey)/2;
+  main.setAttribute("d","M"+mx+" "+my+"Q"+cx.toFixed(1)+" "+cy.toFixed(1)+" "+ex.toFixed(1)+" "+ey.toFixed(1));
+  main.setAttribute("stroke-dasharray",t<NOGO?"4 5":"none");
+  var bf=z0.k==="z6", be=bf?78:al*0.9, Lj=bf?64:50, fs=bf?-1:1; /* Schmetterling: Fock auf der Luvseite */
+  var jx=220-fs*s*Lj*Math.sin(be*r), jy=182+Lj*Math.cos(be*r);
+  var jcx=220-fs*s*(Lj/2*Math.sin(be*r)+(al>2?7:0)), jcy=182+Lj/2*Math.cos(be*r);
+  pole.setAttribute("visibility",bf?"visible":"hidden");
+  if(bf){pole.setAttribute("x1",220);pole.setAttribute("y1",205);pole.setAttribute("x2",jx.toFixed(1));pole.setAttribute("y2",jy.toFixed(1));}
+  jib.setAttribute("d","M220 182Q"+jcx.toFixed(1)+" "+jcy.toFixed(1)+" "+jx.toFixed(1)+" "+jy.toFixed(1));
+  jib.setAttribute("stroke-dasharray",t<NOGO?"4 5":"none");
+
+  /* Texte */
+  var L2=T[lang], z=zoneOf(t);
+  document.getElementById("deg").textContent=t+"°";
+  document.getElementById("side").textContent=L2.wind+" "+(s>0?L2.stbd:L2.port);
+  var zn=document.getElementById("zone"); zn.textContent=L2[z.k];
+  zn.style.color=z.k==="nogo"?"#ff8f98":"#eaf1f8";
+  document.getElementById("boom").textContent=t<NOGO?L2.none:(L2.boom+" "+Math.round(al)+"°");
+  document.getElementById("tip").textContent=L2["t_"+z.k];
+  var vgv=VG[z.k][wind];
+  var tr=document.getElementById("trim"), h="";
+  [[L2.cu,CU[z.k][wind]],[L2.vg,vgv]].forEach(function(x){
+    h+='<div class="row"><span class="n">'+x[0]+'</span><span class="meter">';
+    for(var i=0;i<4;i++) h+='<i'+(i<x[1]?' class="on"':'')+'></i>';
+    h+='</span><span class="v">'+L2.lv[x[1]]+'</span></div>';
+  });
+  var ti=TR[z.k][wind];
+  h+='<div class="row"><span class="n">'+L2.tv+'</span><span class="v tw">'+(ti<0?L2.tn:L2.tw[ti])+'</span></div>';
+  tr.innerHTML=h;
+}
+
+function buildSegs(){
+  var L2=T[lang];
+  function seg(id,label,opts,get,set){
+    var c=document.getElementById(id); c.innerHTML="";
+    var lb=document.createElement("span"); lb.className="lb"; lb.textContent=label; c.appendChild(lb);
+    opts.forEach(function(o,i){
+      var b=document.createElement("button"); b.textContent=o;
+      b.setAttribute("aria-pressed",String(get()===i));
+      b.addEventListener("click",function(){set(i);buildSegs();draw();});
+      c.appendChild(b);
+    });
+  }
+  seg("segW",L2.wl,L2.wv,function(){return wind;},function(i){wind=i;});
+}
+function setLang(l){
+  lang=l; try{localStorage.setItem("trim_lang",l);}catch(e){}
+  document.documentElement.lang=l;
+  var L2=T[l];
+  document.getElementById("title").textContent=L2.title;
+  document.title=L2.title;
+  document.getElementById("hint").textContent=L2.hint;
+  document.getElementById("foot").textContent=L2.foot;
+  var bs=document.querySelectorAll(".langs button");
+  for(var i=0;i<bs.length;i++) bs[i].setAttribute("aria-pressed",String(bs[i].dataset.l===l));
+  buildSegs();
+  draw();
+}
+
+document.querySelectorAll(".langs button").forEach(function(b){
+  b.addEventListener("click",function(){setLang(b.dataset.l);});
+});
+
+/* Zeigen / Ziehen auf der Scheibe */
+var svg=document.getElementById("disc"), drag=false;
+function pick(e){
+  var r=svg.getBoundingClientRect();
+  var dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2);
+  if(Math.abs(dx)<2&&Math.abs(dy)<2)return;
+  var ang=Math.atan2(dx,-dy)*180/Math.PI;
+  side=dx>=0?1:-1;
+  twa=Math.max(0,Math.min(180,Math.round(Math.abs(ang))));
+  draw();
+}
+svg.addEventListener("pointerdown",function(e){drag=true;try{svg.setPointerCapture(e.pointerId);}catch(x){}pick(e);});
+svg.addEventListener("pointermove",function(e){if(drag)pick(e);});
+svg.addEventListener("pointerup",function(){drag=false;});
+svg.addEventListener("pointercancel",function(){drag=false;});
+
+setLang(lang);
+})();
+</script>
+<script>
+if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0){
+  window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});
+}
+</script>
+</body>
+</html>
