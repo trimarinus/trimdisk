@@ -106,6 +106,7 @@ button:focus-visible{outline:2px solid var(--wind);outline-offset:2px}
 <div id="trim"></div>
 <div class="card"><p class="tip" id="tip"></p></div>
 <p class="foot" id="foot"></p>
+<p class="foot" id="off" style="color:#6bb06a;font-weight:700"></p>
 </div>
 </div>
 
@@ -132,7 +133,7 @@ var BOOM=[[20,2],[25,3],[35,5],[45,7],[60,14],[75,24],[90,34],[105,44],[120,54],
 var T={
 de:{
  title:"Trimmscheibe – Winziges Boot", hint:"Auf die Scheibe tippen oder ziehen, um den Windwinkel zu wählen.",
- wind:"Wind von", stbd:"Steuerbord", port:"Backbord", boom:"Baumwinkel ca.", none:"Segel killen",
+ off:"✓ Offline verfügbar", wind:"Wind von", stbd:"Steuerbord", port:"Backbord", boom:"Baumwinkel ca.", none:"Segel killen",
  foot:"Richtwerte – an Boot und Segel anpassen. Wahrer Windwinkel (TWA).",
  cu:"Cunningham", vg:"Baumniederholer (Vang)", bs:"Achterstag", lv:["lose","leicht","mittel","fest","sehr fest"], tv:"Traveller (Groß)", tw:["Luv","Mitte","Lee"], tn:"Schot regelt", kv:"Traveller (Vorsegel)", kw:["vorn","Mitte","achtern"], kb:"ausgebaumt", wl:"Wind", wv:["leicht","mittel","stark"],
  nogo:"No-Go-Zone (unter 20°)", z1:"Am Wind", z2:"Hoher Halbwind", z3:"Halbwind", z4:"Raumwind", z5:"Raumschots", z6:"Vorwind",
@@ -145,7 +146,7 @@ de:{
  t_z6:"Schmetterling (Groß und Fock auf gegenüberliegenden Seiten) oder Gennaker. Bullenstander setzen."},
 hr:{
  title:"Trim-disk – Malešan brod", hint:"Dodirni ili povuci po disku za odabir kuta vjetra.",
- wind:"Vjetar s", stbd:"desnog boka", port:"lijevog boka", boom:"Kut boma oko", none:"jedra lepršaju",
+ off:"✓ Radi bez interneta", wind:"Vjetar s", stbd:"desnog boka", port:"lijevog boka", boom:"Kut boma oko", none:"jedra lepršaju",
  foot:"Orijentacijske vrijednosti – prilagodi brodu i jedrima. Pravi kut vjetra (TWA).",
  cu:"Cunningham", vg:"Vang", bs:"Krmeni štraj", lv:["opušteno","lagano","srednje","čvrsto","vrlo čvrsto"], tv:"Traveler (glavno jedro)", tw:["prema vjetru","sredina","prema zavjetrini"], tn:"škota regulira", kv:"Klizač (flok)", kw:["naprijed","sredina","prema krmi"], kb:"na tangunu", wl:"Vjetar", wv:["slab","umjeren","jak"],
  nogo:"No-go zona (ispod 20°)", z1:"U orcu", z2:"Uski poluvjetar", z3:"Poluvjetar", z4:"Široki poluvjetar", z5:"Kosi krmeni vjetar", z6:"Krmeni vjetar",
@@ -158,7 +159,7 @@ hr:{
  t_z6:"Leptir (glavno jedro i flok na suprotnim stranama) ili gennaker. Postavi preventer."},
 sv:{
  title:"Trimskiva – Pyttelilla båten", hint:"Tryck eller dra på skivan för att välja vindvinkel.",
- wind:"Vind från", stbd:"styrbord", port:"babord", boom:"Bomvinkel ca", none:"seglet fladdrar",
+ off:"✓ Fungerar offline", wind:"Vind från", stbd:"styrbord", port:"babord", boom:"Bomvinkel ca", none:"seglet fladdrar",
  foot:"Riktvärden – anpassa efter båt och segel. Verklig vindvinkel (TWA).",
  cu:"Cunningham", vg:"Bomnedhalare (Vang)", bs:"Akterstag", lv:["löst","lätt","medel","hårt","mycket hårt"], tv:"Travare (storsegel)", tw:["Lovart","Mitten","Lä"], tn:"skotet styr", kv:"Skotvagn (försegel)", kw:["fram","mitten","akter"], kb:"utbommad", wl:"Vind", wv:["svag","måttlig","kraftig"],
  nogo:"No-go-zon (under 20°)", z1:"Bidevind", z2:"Hård halvvind", z3:"Halvvind", z4:"Slör", z5:"Hård slör", z6:"Läns",
@@ -185,6 +186,7 @@ function trimOff(z){
   var o=BO[z.k]?BO[z.k][wind]:0;
   return o;
 }
+var offReady=false;
 var lang="de", twa=60, side=1; // side +1 = Wind von Steuerbord
 try{
   var s=localStorage.getItem("trim_lang");
@@ -326,6 +328,7 @@ function setLang(l){
   document.title=L2.title;
   document.getElementById("hint").textContent=L2.hint;
   document.getElementById("foot").textContent=L2.foot;
+  document.getElementById("off").textContent=offReady?L2.off:"";
   var bs=document.querySelectorAll(".langs button");
   for(var i=0;i<bs.length;i++) bs[i].setAttribute("aria-pressed",String(bs[i].dataset.l===l));
   buildSegs();
@@ -356,6 +359,16 @@ svg.addEventListener("pointerup",function(){drag=false;});
 svg.addEventListener("pointercancel",function(){drag=false;});
 
 setLang(lang);
+
+/* Offline-Status: Häkchen erst, wenn die App wirklich im Speicher liegt */
+if("serviceWorker" in navigator&&"caches" in window&&location.protocol.indexOf("http")===0){
+  navigator.serviceWorker.ready.then(function(){
+    return caches.match("./index.html");
+  }).then(function(hit){
+    if(hit){offReady=true;setLang(lang);}
+    try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+  }).catch(function(){});
+}
 })();
 </script>
 <script>
