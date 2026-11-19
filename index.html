@@ -136,7 +136,7 @@ de:{
  title:"Trimmscheibe – Winziges Boot", hint:"Scheibe antippen oder ziehen",
  off:"✓ Offline verfügbar", wind:"Wind von", stbd:"Steuerbord", port:"Backbord", boom:"Baumwinkel ca.", none:"Segel killen",
  foot:"Richtwerte – an Boot und Segel anpassen. Wahrer Windwinkel (TWA).",
- cu:"Cunningham", vg:"Baumniederholer (Vang)", bs:"Achterstag", lv:["lose","leicht","mittel","fest","sehr fest"], tv:"Traveller (Groß)", tw:["Luv","Mitte","Lee"], tn:"Schot regelt", kv:"Traveller (Vorsegel)", kw:["vorn","Mitte","achtern"], kb:"ausgebaumt", wl:"Wind", wv:["leicht","mittel","stark"],
+ cu:"Cunningham", vg:"Baumniederholer (Vang)", bs:"Achterstag", lt:"Vorliekspannung", lv:["lose","leicht","mittel","fest","sehr fest"], tv:"Traveller (Groß)", tw:["Luv","Mitte","Lee"], tn:"Schot regelt", kv:"Traveller (Vorsegel)", kw:["vorn","Mitte","achtern"], kb:"ausgebaumt", wl:"Wind", wv:["leicht","mittel","stark"],
  nogo:"No-Go-Zone (unter 20°)", z1:"Am Wind", z2:"Hoher Halbwind", z3:"Halbwind", z4:"Raumwind", z5:"Raumschots", z6:"Vorwind",
  t_nogo:"Segel killen, kein Vortrieb. Mindestens auf 20° abfallen.",
  t_z1:"Schoten dicht, Großbaum nahe mittschiffs. Fock dicht. Windfäden am Achterliek sollen gerade nach achtern wehen.",
@@ -149,7 +149,7 @@ hr:{
  title:"Trim-disk – Malešan brod", hint:"Dodirni ili povuci disk",
  off:"✓ Radi bez interneta", wind:"Vjetar s", stbd:"desnog boka", port:"lijevog boka", boom:"Kut boma oko", none:"jedra lepršaju",
  foot:"Orijentacijske vrijednosti – prilagodi brodu i jedrima. Pravi kut vjetra (TWA).",
- cu:"Cunningham", vg:"Vang", bs:"Krmeni štraj", lv:["opušteno","lagano","srednje","čvrsto","vrlo čvrsto"], tv:"Traveler (glavno jedro)", tw:["prema vjetru","sredina","prema zavjetrini"], tn:"škota regulira", kv:"Klizač (flok)", kw:["naprijed","sredina","prema krmi"], kb:"na tangunu", wl:"Vjetar", wv:["slab","umjeren","jak"],
+ cu:"Cunningham", vg:"Vang", bs:"Krmeni štraj", lt:"Zategnutost prednjeg poruba", lv:["opušteno","lagano","srednje","čvrsto","vrlo čvrsto"], tv:"Traveler (glavno jedro)", tw:["prema vjetru","sredina","prema zavjetrini"], tn:"škota regulira", kv:"Klizač (flok)", kw:["naprijed","sredina","prema krmi"], kb:"na tangunu", wl:"Vjetar", wv:["slab","umjeren","jak"],
  nogo:"No-go zona (ispod 20°)", z1:"U orcu", z2:"Uski poluvjetar", z3:"Poluvjetar", z4:"Široki poluvjetar", z5:"Kosi krmeni vjetar", z6:"Krmeni vjetar",
  t_nogo:"Jedra lepršaju, nema pogona. Okreni od vjetra na najmanje 20°.",
  t_z1:"Škote zategnute, glavno jedro gotovo u osi broda. Flok zategnut. Vunići na zadnjem rubu glavnog jedra trebaju ići ravno prema krmi.",
@@ -162,7 +162,7 @@ sv:{
  title:"Trimskiva – Pyttelilla båten", hint:"Tryck eller dra på skivan",
  off:"✓ Fungerar offline", wind:"Vind från", stbd:"styrbord", port:"babord", boom:"Bomvinkel ca", none:"seglet fladdrar",
  foot:"Riktvärden – anpassa efter båt och segel. Verklig vindvinkel (TWA).",
- cu:"Cunningham", vg:"Bomnedhalare (Vang)", bs:"Akterstag", lv:["löst","lätt","medel","hårt","mycket hårt"], tv:"Travare (storsegel)", tw:["Lovart","Mitten","Lä"], tn:"skotet styr", kv:"Skotvagn (försegel)", kw:["fram","mitten","akter"], kb:"utbommad", wl:"Vind", wv:["svag","måttlig","kraftig"],
+ cu:"Cunningham", vg:"Bomnedhalare (Vang)", bs:"Akterstag", lt:"Framlikspänning", lv:["löst","lätt","medel","hårt","mycket hårt"], tv:"Travare (storsegel)", tw:["Lovart","Mitten","Lä"], tn:"skotet styr", kv:"Skotvagn (försegel)", kw:["fram","mitten","akter"], kb:"utbommad", wl:"Vind", wv:["svag","måttlig","kraftig"],
  nogo:"No-go-zon (under 20°)", z1:"Bidevind", z2:"Hård halvvind", z3:"Halvvind", z4:"Slör", z5:"Hård slör", z6:"Läns",
  t_nogo:"Seglet fladdrar, ingen framdrift. Fall av till minst 20°.",
  t_z1:"Skotar hårt, storseglet nästan midskepps. Förseglet hårt. Vindstrimmor i akterliket ska blåsa rakt akterut.",
@@ -176,6 +176,8 @@ sv:{
 /* Richtwerte je Zone und Windstärke (leicht, mittel, stark) */
 var CU={nogo:[0,0,0],z1:[1,2,4],z2:[1,2,3],z3:[0,1,3],z4:[0,1,2],z5:[0,0,2],z6:[0,0,1]};
 var VG={nogo:[0,0,0],z1:[0,1,2],z2:[1,2,3],z3:[2,3,4],z4:[2,3,4],z5:[3,4,4],z6:[3,4,4]};
+/* Vorliekspannung (Luff tension): mehr Wind = straffer, vor dem Wind etwas weniger */
+var LT={nogo:[0,0,0],z1:[2,3,4],z2:[2,3,4],z3:[1,2,3],z4:[1,2,3],z5:[1,2,3],z6:[1,2,2]};
 var BS={nogo:[0,0,0],z1:[1,3,4],z2:[1,2,3],z3:[0,1,3],z4:[0,1,2],z5:[0,0,2],z6:[0,0,1]};
 var TR={nogo:[-1,-1,-1],z1:[0,1,2],z2:[1,1,2],z3:[1,1,2],z4:[-1,-1,-1],z5:[-1,-1,-1],z6:[-1,-1,-1]};
 /* Vorsegel-Schlitten: 0 vorn, 1 Mitte, 2 achtern; -1 entfällt, -2 ausgebaumt */
@@ -304,6 +306,7 @@ function draw(){
   h+=mtr(L2.vg,VG[z.k][wind]);                                          /* Vang */
   h+=mtr(L2.bs,BS[z.k][wind]);                                          /* Achterstag */
   h+=mtr(L2.cu,CU[z.k][wind]);                                          /* Cunningham */
+  h+=mtr(L2.lt,LT[z.k][wind]);                                          /* Vorliekspannung */
   tr.innerHTML=h;
 }
 
