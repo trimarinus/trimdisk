@@ -3,7 +3,7 @@
    - Danach startet die App sofort aus dem Speicher, auch ohne Internet.
    - Ist Internet da, holt sie sich im Hintergrund die neueste Fassung (gilt beim nächsten Start).
    Nur wenn Dateien umbenannt/hinzugefügt werden: VERSION ändern, damit alte Speicher gelöscht werden. */
-var VERSION = "trimdisk-2026-11-19-offline";
+var VERSION = "trimdisk-2026-11-19-offline-v1";
 var MUST = ["./index.html"];  /* ohne diese Datei wird der Worker nicht installiert */
 var NICE = ["./manifest.webmanifest", "./icon-180.png", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
 
