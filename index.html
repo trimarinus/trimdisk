@@ -26,7 +26,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:10px;ma
 h1{font-size:1.1rem;line-height:1.2;margin:0;font-weight:700;letter-spacing:.01em;min-width:0;flex:1}
 .langs{display:flex;flex:none;border:1px solid var(--line);border-radius:999px;overflow:hidden}
 .langs button{background:none;border:0;color:var(--mute);font:inherit;font-weight:700;font-size:.85rem;
-  padding:0 14px;min-width:46px;min-height:40px;cursor:pointer}
+  padding:0 11px;min-width:42px;min-height:40px;cursor:pointer}
 .langs button[aria-pressed="true"]{background:var(--wind);color:#1a1a1a}
 
 #disc{display:block;width:min(100%,max(240px,calc(100vh - 430px)));width:min(100%,max(240px,calc(100svh - 430px)));height:auto;margin:0 auto;touch-action:none;cursor:pointer}
@@ -76,7 +76,7 @@ button:focus-visible{outline:2px solid var(--wind);outline-offset:2px}
 <header>
   <h1 id="title"></h1>
   <div class="langs" role="group" aria-label="Sprache / Jezik / Språk">
-    <button data-l="de">DE</button><button data-l="hr">HR</button><button data-l="sv">SV</button>
+    <button data-l="hr">HR</button><button data-l="en">EN</button><button data-l="de">DE</button><button data-l="sv">SV</button>
   </div>
 </header>
 <div class="layout">
@@ -149,7 +149,7 @@ hr:{
  title:"Trim-disk – Malešan brod", hint:"Dodirni ili povuci disk",
  off:"✓ Radi bez interneta", wind:"Vjetar s", stbd:"desnog boka", port:"lijevog boka", boom:"Kut boma oko", none:"jedra lepršaju",
  foot:"Orijentacijske vrijednosti – prilagodi brodu i jedrima. Pravi kut vjetra (TWA).",
- cu:"Cunningham", vg:"Vang", bs:"Krmeni štraj", lt:"Zategnutost prednjeg poruba", ul:"Baza glavnog jedra", lv:["opušteno","lagano","srednje","čvrsto","vrlo čvrsto"], tv:"Traveler (glavno jedro)", tw:["prema vjetru","sredina","prema zavjetrini"], tn:"škota regulira", kv:"Klizač (flok)", kw:["naprijed","sredina","prema krmi"], kb:"na tangunu", wl:"Vjetar", wv:["slab","umjeren","jak"],
+ cu:"Cunningham", vg:"Vang", bs:"Krmeni štraj", lt:"Zategnutost prednjeg poruba", ul:"Zategnutost donjeg poruba", lv:["opušteno","lagano","srednje","čvrsto","vrlo čvrsto"], tv:"Traveler (glavno jedro)", tw:["prema vjetru","sredina","prema zavjetrini"], tn:"škota regulira", kv:"Klizač (flok)", kw:["naprijed","sredina","prema krmi"], kb:"na tangunu", wl:"Vjetar", wv:["slab","umjeren","jak"],
  nogo:"No-go zona (ispod 20°)", z1:"U orcu", z2:"Uski poluvjetar", z3:"Poluvjetar", z4:"Široki poluvjetar", z5:"Kosi krmeni vjetar", z6:"Krmeni vjetar",
  t_nogo:"Jedra lepršaju, nema pogona. Okreni od vjetra na najmanje 20°.",
  t_z1:"Škote zategnute, glavno jedro gotovo u osi broda. Flok zategnut. Vunići na zadnjem rubu glavnog jedra trebaju ići ravno prema krmi.",
@@ -158,6 +158,19 @@ hr:{
  t_z4:"Škote jako popuštene, vang zategnut. Flok po potrebi na tangun.",
  t_z5:"Glavno jedro daleko otvoreno, moguć gennaker. Pazi na nehotični okret krmom.",
  t_z6:"Leptir (glavno jedro i flok na suprotnim stranama) ili gennaker. Postavi preventer."},
+en:{
+ title:"Trim Disc – Tiny Boat", hint:"Tap or drag the disc",
+ off:"✓ Works offline", wind:"Wind from", stbd:"starboard", port:"port", boom:"Boom angle approx.", none:"sails luffing",
+ foot:"Guide values – adjust to your boat and sails. True wind angle (TWA).",
+ cu:"Cunningham", vg:"Vang (boom vang)", bs:"Backstay", lt:"Luff tension", ul:"Foot tension (outhaul)", lv:["loose","light","medium","firm","very firm"], tv:"Traveller (main)", kv:"Traveller (headsail)", kw:["forward","centre","aft"], kb:"poled out", tw:["windward","centre","leeward"], tn:"sheet controls", wl:"Wind", wv:["light","medium","strong"],
+ nogo:"No-go zone (under 20°)", z1:"Close-hauled", z2:"Close reach", z3:"Beam reach", z4:"Broad reach", z5:"Deep reach", z6:"Running",
+ t_nogo:"Sails luff, no drive. Bear away to at least 20°.",
+ t_z1:"Sheets in, boom near the centreline. Headsail trimmed in. Telltales on the leech should stream straight aft.",
+ t_z2:"Ease the sheets slightly, allow more twist.",
+ t_z3:"Ease the sheets until the luff just starts to lift, then trim in a touch. Tighten the vang.",
+ t_z4:"Ease the sheets well out, vang tight. Pole out the headsail if needed.",
+ t_z5:"Main well out, gennaker possible. Watch out for an accidental gybe.",
+ t_z6:"Goose-wing (main and headsail on opposite sides) or gennaker. Rig a preventer."},
 sv:{
  title:"Trimskiva – Pyttelilla båten", hint:"Tryck eller dra på skivan",
  off:"✓ Fungerar offline", wind:"Vind från", stbd:"styrbord", port:"babord", boom:"Bomvinkel ca", none:"seglet fladdrar",
@@ -196,7 +209,7 @@ var lang="de", twa=60, side=1; // side +1 = Wind von Steuerbord
 try{
   var s=localStorage.getItem("trim_lang");
   var n=(navigator.language||"de").slice(0,2);
-  lang=T[s]?s:(T[n]?n:"de");
+  lang=T[s]?s:(T[n]?n:"en");
 }catch(e){}
 
 var NS="http://www.w3.org/2000/svg";
